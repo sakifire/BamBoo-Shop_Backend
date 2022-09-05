@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Er/fptVMkV7jS7hqt3gCez6TXEJVd81oinSM+/olrKl26gGopd/GOy8w2uVljmiMTZ6eoufF0IEhJe/EANaOCQ==",
+  "dgSpecHash": "MxU3mVJ370Fxl6kskwHIqN9DFLR1BTHCPOzCzlgRuUXTy83qSrpJXg/PIA0BxIa22JvpVbCxJ6VVA9esZbx4Zg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\manht\\OneDrive\\Documents\\GitHub\\New_Backend\\Ecommerce\\Ecommerce\\Ecommerce.csproj",
+  "projectFilePath": "C:\\Users\\manht\\OneDrive\\Documents\\GitHub\\Ecommerce_Backend\\Ecommerce\\Ecommerce\\Ecommerce.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\manht\\.nuget\\packages\\castle.core\\4.4.1\\castle.core.4.4.1.nupkg.sha512",
     "C:\\Users\\manht\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",

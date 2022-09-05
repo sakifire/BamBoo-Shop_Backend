@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\manht\\OneDrive\\Documents\\GitHub\\New_Backend\\Ecommerce\\Ecommerce\\Ecommerce.csproj": {}
+    "C:\\Users\\manht\\OneDrive\\Documents\\GitHub\\Ecommerce_Backend\\Ecommerce\\Ecommerce\\Ecommerce.csproj": {}
   },
   "projects": {
-    "C:\\Users\\manht\\OneDrive\\Documents\\GitHub\\New_Backend\\Ecommerce\\Ecommerce\\Ecommerce.csproj": {
+    "C:\\Users\\manht\\OneDrive\\Documents\\GitHub\\Ecommerce_Backend\\Ecommerce\\Ecommerce\\Ecommerce.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\manht\\OneDrive\\Documents\\GitHub\\New_Backend\\Ecommerce\\Ecommerce\\Ecommerce.csproj",
+        "projectUniqueName": "C:\\Users\\manht\\OneDrive\\Documents\\GitHub\\Ecommerce_Backend\\Ecommerce\\Ecommerce\\Ecommerce.csproj",
         "projectName": "Ecommerce",
-        "projectPath": "C:\\Users\\manht\\OneDrive\\Documents\\GitHub\\New_Backend\\Ecommerce\\Ecommerce\\Ecommerce.csproj",
+        "projectPath": "C:\\Users\\manht\\OneDrive\\Documents\\GitHub\\Ecommerce_Backend\\Ecommerce\\Ecommerce\\Ecommerce.csproj",
         "packagesPath": "C:\\Users\\manht\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\manht\\OneDrive\\Documents\\GitHub\\New_Backend\\Ecommerce\\Ecommerce\\obj\\",
+        "outputPath": "C:\\Users\\manht\\OneDrive\\Documents\\GitHub\\Ecommerce_Backend\\Ecommerce\\Ecommerce\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
