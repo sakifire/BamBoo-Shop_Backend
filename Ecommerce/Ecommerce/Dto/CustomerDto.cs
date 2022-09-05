@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Model
+namespace Ecommerce.Dto
 {
-    [Table("Customer")]
-    public class Customer
+    public class CustomerDto
     {
-        [Key]
         public string Code { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
@@ -23,8 +19,10 @@ namespace Ecommerce.Model
         public string Gender { get; set; }
         public DateTime? LastLogin { get; set; }
         public string? OTP { get; set; }
+        public string? City { get; set; } 
+        public string? District { get; set; }
         public string? AuthToken { get; set; }
 
-        public virtual ICollection<Order> Orders { get; set; }
+        public List<OrderDto> Orders { get; set; }
     }
 }
