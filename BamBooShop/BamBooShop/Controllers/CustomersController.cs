@@ -214,5 +214,21 @@ namespace BamBooShop.Controllers
             }
         }
 
+        [Route("socialNetwork-signIn")]
+        [HttpPost]
+        public IActionResult PostSocialNetwork(SocialNetworkCustomerDto customer)
+        {
+            ResponseAPI responseAPI = new ResponseAPI();
+            try
+            {
+                responseAPI.Data = this._customerService.InsertSocialNetworkAccount(customer);
+                return Ok(responseAPI);
+            }
+            catch (Exception ex)
+            {
+                responseAPI.Message = ex.Message;
+                return BadRequest(responseAPI);
+            }
+        }
     }
 }

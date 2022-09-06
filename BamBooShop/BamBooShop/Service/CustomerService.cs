@@ -6,8 +6,10 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using BamBooShop.Dto;
+using BamBooShop.Interface;
 using BamBooShop.Model;
 using BamBooShop.Util;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BamBooShop.Service
@@ -341,5 +343,86 @@ namespace BamBooShop.Service
                 this.context.SaveChanges();
             }
         }
+
+        /// <summary>
+        /// Đăng nhập qua social network
+        /// </summary>
+        /// <param name="entity"></param>
+        public void GetSocialNetworkAccessToken(CustomerDto entity)
+        {
+            //Customer customer = this.context.Customers
+            //    .FirstOrDefault(x => x.Email == entity.Email);
+
+            //if (customer == null)
+            //    throw new ArgumentException("Tài khoản hoặc mật khẩu không đúng");
+
+            //string passwordCheck = DataHelper.SHA256Hash(entity.Email + "_" + entity.Password);
+
+            //if (customer.Password != passwordCheck)
+            //    throw new ArgumentException("Tài khoản hoặc mật khẩu không đúng");
+
+            //customer.LastLogin = DateTime.Now;
+            //this.context.SaveChanges();
+
+            //DateTime expirationDate = DateTime.Now.Date.AddMinutes(Constants.JwtConfig.ExpirationInMinutes);
+            //long expiresAt = (long)(expirationDate - new DateTime(1970, 1, 1)).TotalSeconds;
+
+            //var tokenHandler = new JwtSecurityTokenHandler();
+            //var key = Encoding.ASCII.GetBytes(Constants.JwtConfig.SecretKey);
+            //var tokenDescriptor = new SecurityTokenDescriptor
+            //{
+            //    Subject = new ClaimsIdentity(new Claim[]
+            //    {
+            //            new Claim(ClaimTypes.UserData, customer.Code),
+            //            new Claim(ClaimTypes.Expiration, expiresAt.ToString())
+            //    }),
+            //    Expires = expirationDate,
+            //    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+            //};
+            //var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            //return new
+            //{
+            //    customer.Email,
+            //    customer.FullName,
+            //    Token = tokenHandler.WriteToken(token),
+            //    ExpiresAt = expiresAt
+            //};
+        }
+
+        /// <summary>
+        /// Thêm mới tài khoản Social network
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public virtual SocialNetworkCustomerDto InsertSocialNetworkAccount(SocialNetworkCustomerDto entity)
+        {    
+            var isExistCustomer = this.context.Customers
+                                    .FirstOrDefault(x => x.AuthToken == entity.AuthToken && x.Email == entity.Email);
+            if (isExistCustomer != null)
+            {
+                throw new ArgumentException("Tài khoản này đã tồn tại");         
+            }
+            else
+            {
+                Customer customer = new Customer()
+                {
+                    Code = Guid.NewGuid().ToString("N"),
+                    FullName = entity.FullName,
+                    PhoneNumber = "",
+                    Email = entity.Email,
+                    Password = DataHelper.SHA256Hash(entity.Email),
+                    AuthToken = entity.AuthToken,
+                    Avatar = entity.Avatar
+                };
+
+                this.context.Customers.Add(customer);
+                this.context.SaveChanges();
+
+                return entity;
+            }
+            
+        }
+
     }
 }
