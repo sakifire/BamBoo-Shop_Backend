@@ -409,7 +409,7 @@ namespace BamBooShop.Service
                 {
                     Code = Guid.NewGuid().ToString("N"),
                     FullName = entity.FullName,
-                    PhoneNumber = "",
+                    //PhoneNumber = "",
                     Email = entity.Email,
                     Password = DataHelper.SHA256Hash(entity.Email),
                     AuthToken = entity.AuthToken,
