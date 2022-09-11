@@ -79,7 +79,11 @@ namespace BamBooShop.Service
                 {
                     Id = x.Id,
                     Title = x.Title,
-                    Alias = x.Alias
+                    Alias = x.Alias,
+                    Created = x.Created,
+                    //ShortDescription = x.ShortDescription,
+                    //Description = x.Description,
+
                 })
                 .ToList();
         }
@@ -98,9 +102,11 @@ namespace BamBooShop.Service
                 {
                     Title = x.Title,
                     Alias = x.Alias,
-                    Image = x.Image
+                    Image = x.Image,
+                    Created = x.Created,
+                    ShortDescription = x.ShortDescription,
                 })
-                .Take(5)
+                .Take(4)
                 .ToList();
         }
 
@@ -118,7 +124,7 @@ namespace BamBooShop.Service
                    {
                        Id = x.Id,
                        Name = x.Name,
-                       Alias = x.Alias
+                       Alias = x.Alias,
                    }).FirstOrDefault();
 
             menu.Articles = this.context.Articles
@@ -129,7 +135,8 @@ namespace BamBooShop.Service
                 {
                     Title = x.Title,
                     Alias = x.Alias,
-                    Image = x.Image
+                    Image = x.Image,
+                    Created = x.Created
                 })
                 .Take(take)
                 .ToList();
