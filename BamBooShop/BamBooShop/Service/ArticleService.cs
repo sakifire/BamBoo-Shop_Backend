@@ -75,6 +75,7 @@ namespace BamBooShop.Service
         public List<ArticleDto> GetAll()
         {
             return this.context.Articles
+                .Where(x => x.MenuId == 8)
                 .Select(x => new ArticleDto()
                 {
                     Id = x.Id,
@@ -83,6 +84,7 @@ namespace BamBooShop.Service
                     Created = x.Created,
                     //ShortDescription = x.ShortDescription,
                     //Description = x.Description,
+                    Image = x.Image,
 
                 })
                 .ToList();

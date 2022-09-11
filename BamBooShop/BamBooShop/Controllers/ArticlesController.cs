@@ -34,6 +34,22 @@ namespace BamBooShop.Controllers
                 return BadRequest(responseAPI);
             }
         }
+        [Route("get-all-article")]
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            ResponseAPI responseAPI = new ResponseAPI();
+            try
+            {
+                responseAPI.Data = this._articleService.GetAll();
+                return Ok(responseAPI);
+            }
+            catch (Exception ex)
+            {
+                responseAPI.Message = ex.Message;
+                return BadRequest(responseAPI);
+            }
+        }
 
         [Route("get-by-menu")]
         [HttpGet]
