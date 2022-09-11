@@ -99,7 +99,7 @@ namespace BamBooShop.Service
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public List<ProductDto> GetProductSelling(int number = 10)
+        public List<ProductDto> GetProductSelling()
         {
             List<ProductDto> products = this.context.Products
                 //hmtien add 19/8
@@ -130,7 +130,7 @@ namespace BamBooShop.Service
                         Value = y.Value
                     }).ToList(),
                 })
-                .Take(number)
+                .Take(8)
                 .ToList();
 
             this.RestructureAttribute(products);

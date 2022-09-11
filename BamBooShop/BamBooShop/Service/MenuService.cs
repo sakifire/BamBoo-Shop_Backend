@@ -276,7 +276,7 @@ namespace BamBooShop.Service
                             Image = y.Image,
                             Quantity = y.Quantity
                         })
-                        .Take(10)
+                        .Take(8)
                         .ToList()
                 }).ToList();
 
