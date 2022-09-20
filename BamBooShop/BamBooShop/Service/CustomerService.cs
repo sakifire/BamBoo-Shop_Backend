@@ -303,7 +303,7 @@ namespace BamBooShop.Service
 
             if (customer != null)
             {
-                if (this.context.Customers.Any(x => x.Code != entity.Code && x.Email == entity.Email))
+                if (this.context.Customers.Any(x => x.Code != entity.Code && x.AuthToken== null && x.Email == entity.Email))
                     throw new ArgumentException("Email đã được đăng ký");
 
                 if (this.context.Customers.Any(x => x.Code != entity.Code && x.PhoneNumber == entity.PhoneNumber))
