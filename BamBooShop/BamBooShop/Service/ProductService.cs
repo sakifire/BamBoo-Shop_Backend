@@ -277,6 +277,7 @@ namespace BamBooShop.Service
                     //IsDeleted = x.IsDeleted,
                     //hmtien add 25/8
                     Quantity = x.Quantity,
+                    ShortDescription = x.ShortDescription,
                     ProductAttributes = x.ProductAttributes.Select(y => new ProductAttributeDto()
                     {
                         Attribute = new AttributeDto()
