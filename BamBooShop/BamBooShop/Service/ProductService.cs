@@ -139,14 +139,41 @@ namespace BamBooShop.Service
 
         public List<ProductDto> Search(string keySearch, int take, string orderBy = "", string price = "")
         {
-            var query = this.context.Products
-                //hmtien add 20/8
+            List<ProductDto> query = this.context.Products
+                //hmtien add 19/8
                 .Where(x => !x.IsDeleted)
-                .Where(x => x.Status == 10);
+                .Where(x => x.Status == 10)
+                .OrderBy(x => x.Index)
+                .Select(x => new ProductDto()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Image = x.Image,
+                    Price = x.Price,
+                    DiscountPrice = x.DiscountPrice,
+                    Alias = x.Alias,
+                    //hmtien add 20/8
+                    //IsDeleted = x.IsDeleted,
+                    //hmtien add 25/8
+                    ShortDescription = x.ShortDescription,
+                    Quantity = x.Quantity,
+                    ProductAttributes = x.ProductAttributes.Select(y => new ProductAttributeDto()
+                    {
+                        Attribute = new AttributeDto()
+                        {
+                            Id = y.Attribute.Id,
+                            Name = y.Attribute.Name
+                        },
+                        AttributeId = y.AttributeId,
+                        Value = y.Value
+                    }).ToList(),
+                })
+                .ToList();
+            this.RestructureAttribute(query);
 
             if (!string.IsNullOrWhiteSpace(keySearch))
             {
-                query = query.Where(x => x.Name.Contains(keySearch));
+                query = query.Where(x => x.Name.Contains(keySearch)).ToList();
             }
 
             if (!string.IsNullOrWhiteSpace(orderBy))
@@ -156,10 +183,10 @@ namespace BamBooShop.Service
                     case "highlight":
                         break;
                     case "price-asc":
-                        query = query.OrderBy(x => x.DiscountPrice);
+                        query = query.OrderBy(x => x.DiscountPrice).ToList();
                         break;
                     case "price-desc":
-                        query = query.OrderByDescending(x => x.DiscountPrice);
+                        query = query.OrderByDescending(x => x.DiscountPrice).ToList();
                         break;
                 }
             }
@@ -169,38 +196,24 @@ namespace BamBooShop.Service
                 switch (price)
                 {
                     case "m30":
-                        query = query.Where(x => x.DiscountPrice >= 30000000);
+                        query = query.Where(x => x.DiscountPrice >= 30000000).ToList();
                         break;
                     case "f20t30":
-                        query = query.Where(x => x.DiscountPrice >= 20000000 && x.DiscountPrice < 30000000);
+                        query = query.Where(x => x.DiscountPrice >= 20000000 && x.DiscountPrice < 30000000).ToList();
                         break;
                     case "f10t20":
-                        query = query.Where(x => x.DiscountPrice >= 10000000 && x.DiscountPrice < 20000000);
+                        query = query.Where(x => x.DiscountPrice >= 10000000 && x.DiscountPrice < 20000000).ToList();
                         break;
                     case "f5t10":
-                        query = query.Where(x => x.DiscountPrice >= 5000000 && x.DiscountPrice < 10000000);
+                        query = query.Where(x => x.DiscountPrice >= 5000000 && x.DiscountPrice < 10000000).ToList();
                         break;
                     case "l5":
-                        query = query.Where(x => x.DiscountPrice < 5000000);
+                        query = query.Where(x => x.DiscountPrice < 5000000).ToList();
                         break;
                 }
             }
 
-            return query
-                .Select(x => new ProductDto()
-                {
-                    Alias = x.Alias,
-                    DiscountPrice = x.DiscountPrice,
-                    Image = x.Image,
-                    Price = x.Price,
-                    Name = x.Name,
-                    //hmtien add 20/8
-                    //IsDeleted = x.IsDeleted
-                    //hmtien add 25/8
-                    Quantity = x.Quantity
-                })
-                .Take(take)
-                .ToList();
+            return query.Take(take).ToList();
         }
 
         /// <summary>
@@ -222,62 +235,24 @@ namespace BamBooShop.Service
                     Alias = x.Alias
                 }).FirstOrDefault();
 
-            var query = this.context.Products
+            List<ProductDto> query = this.context.Products
                 //hmtien add 19/8
                 .Where(x => !x.IsDeleted)
-                .Where(x => x.Status == 10 && x.MenuId == menu.Id);
-
-            if (!string.IsNullOrWhiteSpace(orderBy))
-            {
-                switch (orderBy)
-                {
-                    case "highlight":
-                        break;
-                    case "price-asc":
-                        query = query.OrderBy(x => x.DiscountPrice);
-                        break;
-                    case "price-desc":
-                        query = query.OrderByDescending(x => x.DiscountPrice);
-                        break;
-                }
-            }
-            
-            if (!string.IsNullOrWhiteSpace(price))
-            {
-                switch (price)
-                {
-                    case "m30":
-                        query = query.Where(x => x.DiscountPrice >= 30000000);
-                        break;
-                    case "f20t30":
-                        query = query.Where(x => x.DiscountPrice >= 20000000 && x.DiscountPrice < 30000000);
-                        break;
-                    case "f10t20":
-                        query = query.Where(x => x.DiscountPrice >= 10000000 && x.DiscountPrice < 20000000);
-                        break;
-                    case "f5t10":
-                        query = query.Where(x => x.DiscountPrice >= 5000000 && x.DiscountPrice < 10000000);
-                        break;
-                    case "l5":
-                        query = query.Where(x => x.DiscountPrice < 5000000);
-                        break;
-                }
-            }
-
-            List<ProductDto> products = query
+                .Where(x => x.Status == 10)
+                .OrderBy(x => x.Index)
                 .Select(x => new ProductDto()
                 {
                     Id = x.Id,
-                    Alias = x.Alias,
-                    DiscountPrice = x.DiscountPrice,
+                    Name = x.Name,
                     Image = x.Image,
                     Price = x.Price,
-                    Name = x.Name,
+                    DiscountPrice = x.DiscountPrice,
+                    Alias = x.Alias,
                     //hmtien add 20/8
                     //IsDeleted = x.IsDeleted,
                     //hmtien add 25/8
-                    Quantity = x.Quantity,
                     ShortDescription = x.ShortDescription,
+                    Quantity = x.Quantity,
                     ProductAttributes = x.ProductAttributes.Select(y => new ProductAttributeDto()
                     {
                         Attribute = new AttributeDto()
@@ -289,11 +264,50 @@ namespace BamBooShop.Service
                         Value = y.Value
                     }).ToList(),
                 })
-                .Take(take)
                 .ToList();
 
-            this.RestructureAttribute(products);
-            menu.Products = products;
+            this.RestructureAttribute(query);
+
+            if (!string.IsNullOrWhiteSpace(orderBy))
+            {
+                switch (orderBy)
+                {
+                    case "highlight":
+                        break;
+                    case "price-asc":
+                        query = query.OrderBy(x => x.DiscountPrice).ToList();
+                        break;
+                    case "price-desc":
+                        query = query.OrderByDescending(x => x.DiscountPrice).ToList();
+                        break;
+                }
+            }
+            
+            if (!string.IsNullOrWhiteSpace(price))
+            {
+                switch (price)
+                {
+                    case "m30":
+                        query = query.Where(x => x.DiscountPrice >= 30000000).ToList();
+                        break;
+                    case "f20t30":
+                        query = query.Where(x => x.DiscountPrice >= 20000000 && x.DiscountPrice < 30000000).ToList();
+                        break;
+                    case "f10t20":
+                        query = query.Where(x => x.DiscountPrice >= 10000000 && x.DiscountPrice < 20000000).ToList();
+                        break;
+                    case "f5t10":
+                        query = query.Where(x => x.DiscountPrice >= 5000000 && x.DiscountPrice < 10000000).ToList();
+                        break;
+                    case "l5":
+                        query = query.Where(x => x.DiscountPrice < 5000000).ToList();
+                        break;
+                }
+            }
+
+            query = query.Take(take).OrderBy(x=> x.Id).ToList();
+
+            menu.Products = query;
             return menu;
         }
 
