@@ -238,7 +238,7 @@ namespace BamBooShop.Service
             List<ProductDto> query = this.context.Products
                 //hmtien add 19/8
                 .Where(x => !x.IsDeleted)
-                .Where(x => x.Status == 10)
+                .Where(x => x.Status == 10 && x.MenuId == menu.Id)
                 .OrderBy(x => x.Index)
                 .Select(x => new ProductDto()
                 {
@@ -306,6 +306,8 @@ namespace BamBooShop.Service
             }
 
             query = query.Take(take).OrderBy(x=> x.Id).ToList();
+            if (query.Count == 0)
+                query = new List<ProductDto>();
 
             menu.Products = query;
             return menu;
