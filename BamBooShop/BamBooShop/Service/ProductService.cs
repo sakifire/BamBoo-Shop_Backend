@@ -188,6 +188,12 @@ namespace BamBooShop.Service
                     case "price-desc":
                         query = query.OrderByDescending(x => x.DiscountPrice).ToList();
                         break;
+                    case "az":
+                        query = query.OrderBy(x => x.Name).ToList();
+                        break;
+                    case "za":
+                        query = query.OrderByDescending(x => x.Name).ToList();
+                        break;
                 }
             }
             
@@ -280,6 +286,12 @@ namespace BamBooShop.Service
                     case "price-desc":
                         query = query.OrderByDescending(x => x.DiscountPrice).ToList();
                         break;
+                    case "az":
+                        query = query.OrderBy(x => x.Name).ToList();
+                        break;
+                    case "za":
+                        query = query.OrderByDescending(x => x.Name).ToList();
+                        break;
                 }
             }
             
@@ -305,7 +317,7 @@ namespace BamBooShop.Service
                 }
             }
 
-            query = query.Take(take).OrderBy(x=> x.Id).ToList();
+            query = query.Take(take).ToList();
             if (query.Count == 0)
                 query = new List<ProductDto>();
 
