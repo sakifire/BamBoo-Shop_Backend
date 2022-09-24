@@ -100,6 +100,7 @@ namespace BamBooShop.Service
                 .Where(x => x.Active)
                 .Where(x => x.Menu.Type == "bai-viet")
                 .OrderBy(x => x.Index)
+                .OrderBy(x => x.Created)
                 .Select(x => new ArticleDto()
                 {
                     Title = x.Title,
