@@ -29,7 +29,7 @@ namespace BamBooShop.Service
         public void RequestOTP(string email)
         {
             if (this.context.Customers.Any(x => x.Email == email))
-                throw new ArgumentException("Email đã được sử dụng");
+                throw new ArgumentException("Email existed");
             EmailSignUp emailSignUp = this.context.EmailSignUps.FirstOrDefault(x => x.Email == email);
 
             string otp = new Random().Next(100000, 999999).ToString();
@@ -75,7 +75,7 @@ namespace BamBooShop.Service
         public void ForgotPassword(string email)
         {
             if (!this.context.Customers.Any(x => x.Email == email))
-                throw new ArgumentException("Email chưa được đăng ký sử dụng");
+                throw new ArgumentException("Email hasn't been regitered yet");
             Customer customer = this.context.Customers.FirstOrDefault(x => x.Email == email);
 
             string newPassword = Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper();
@@ -104,12 +104,12 @@ namespace BamBooShop.Service
                 .FirstOrDefault(x => x.Email == entity.Email);
 
             if (customer == null)
-                throw new ArgumentException("Tài khoản hoặc mật khẩu không đúng");
+                throw new ArgumentException("Email or Password is incorrect");
 
             string passwordCheck = DataHelper.SHA256Hash(entity.Email + "_" + entity.Password);
 
             if (customer.Password != passwordCheck)
-                throw new ArgumentException("Tài khoản hoặc mật khẩu không đúng");
+                throw new ArgumentException("Email or Password is incorrect");
 
             customer.LastLogin = DateTime.Now;
             this.context.SaveChanges();
@@ -268,13 +268,13 @@ namespace BamBooShop.Service
         public virtual CustomerDto Insert(CustomerDto entity)
         {
             if (!this.context.EmailSignUps.Any(x => x.Email == entity.Email && x.OTP == entity.OTP))
-                throw new ArgumentException("Thông tin xác thực OTP không hợp lệ");
+                throw new ArgumentException("Wrong OTP");
 
             if (this.context.Customers.Any(x => x.Email == entity.Email))
-                throw new ArgumentException("Email đã được đăng ký");
+                throw new ArgumentException("Email existed");
 
             if (this.context.Customers.Any(x => x.PhoneNumber == entity.PhoneNumber))
-                throw new ArgumentException("Số điện thoại đã được đăng ký");
+                throw new ArgumentException("PhoneNumber existed");
 
             Customer customer = new Customer()
             {
@@ -304,10 +304,10 @@ namespace BamBooShop.Service
             if (customer != null)
             {
                 if (this.context.Customers.Any(x => x.Code != entity.Code && x.AuthToken== null && x.Email == entity.Email))
-                    throw new ArgumentException("Email đã được đăng ký");
+                    throw new ArgumentException("Email existed");
 
                 if (this.context.Customers.Any(x => x.Code != entity.Code && x.PhoneNumber == entity.PhoneNumber))
-                    throw new ArgumentException("Số điện thoại đã được đăng ký");
+                    throw new ArgumentException("This PhoneNumber has been already used");
 
                 customer.FullName = entity.FullName;
                 customer.Email = entity.Email;
@@ -334,7 +334,7 @@ namespace BamBooShop.Service
             string passwordCheck = DataHelper.SHA256Hash(customer.Email + "_" + oldPassword);
 
             if (customer.Password != passwordCheck)
-                throw new ArgumentException("Mật khẩu cũ không đúng");
+                throw new ArgumentException("Old Password is incorrect");
             else
             {
                 string newCheck = DataHelper.SHA256Hash(customer.Email + "_" + newPassword);
@@ -401,7 +401,7 @@ namespace BamBooShop.Service
                                     .FirstOrDefault(x => x.AuthToken == entity.AuthToken && x.Email == entity.Email);
             if (isExistCustomer != null)
             {
-                throw new ArgumentException("Tài khoản này đã tồn tại");         
+                throw new ArgumentException("This Email has already been used");         
             }
             else
             {

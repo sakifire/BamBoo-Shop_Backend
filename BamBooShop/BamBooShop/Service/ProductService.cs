@@ -46,11 +46,11 @@ namespace BamBooShop.Service
         {
             if (string.IsNullOrWhiteSpace(keySearch))
                 keySearch = null;
-
+            keySearch = keySearch.ToLower();
             return this.context.Products
                 //hmtien add 19/8
                 .Where(x => !x.IsDeleted)
-                .Where(x => keySearch == null || x.Name.Contains(keySearch))
+                .Where(x => keySearch == null || x.Name.ToLower().Contains(keySearch))
                 .Where(x => menuId == null || x.MenuId == menuId)
                 .OrderBy(x => x.Menu.Index)
                 .ThenBy(x => x.Index)
@@ -173,7 +173,8 @@ namespace BamBooShop.Service
 
             if (!string.IsNullOrWhiteSpace(keySearch))
             {
-                query = query.Where(x => x.Name.Contains(keySearch)).ToList();
+                string lowerKeySeach = keySearch.ToLower();
+                query = query.Where(x => x.Name.ToLower().Contains(lowerKeySeach)).ToList();
             }
 
             if (!string.IsNullOrWhiteSpace(orderBy))
