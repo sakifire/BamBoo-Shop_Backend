@@ -18,7 +18,7 @@ namespace BamBooShop.Model
         public int Status { get; set; }
         public string Note { get; set; }
         public DateTime Created { get; set; }
-
+        public bool IsPaid { get; set; }
         public virtual Customer Customer { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }

@@ -348,6 +348,7 @@ namespace BamBooShop.Service
                 Note = entity.Note,
                 Status = Constants.OrderStatus.CHO_XAC_NHAN,
                 Created = dateNow,
+                IsPaid = entity.IsPaid
             };
 
             List<OrderDetail> orderDetails = new List<OrderDetail>();

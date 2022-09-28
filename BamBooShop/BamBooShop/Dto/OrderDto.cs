@@ -18,7 +18,7 @@ namespace BamBooShop.Dto
         public int Status { get; set; }
         public string Note { get; set; }
         public DateTime Created { get; set; }
-
+        public bool IsPaid { get; set; }
         public CustomerDto Customer { get; set; }
         public List<OrderDetailDto> OrderDetails { get; set; }
     }
