@@ -158,6 +158,7 @@ namespace BamBooShop.Service
                     PhoneNumber = x.PhoneNumber,
                     Status = x.Status,
                     TotalAmount = x.TotalAmount,
+                    IsPaid = x.IsPaid,
                     OrderDetails = x.OrderDetails.Select(y => new OrderDetailDto()
                     {
                         Id = y.Id,
