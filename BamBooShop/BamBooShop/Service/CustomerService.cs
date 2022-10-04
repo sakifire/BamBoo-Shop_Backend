@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -9,19 +10,30 @@ using BamBooShop.Dto;
 using BamBooShop.Interface;
 using BamBooShop.Model;
 using BamBooShop.Util;
+using Castle.Core.Resource;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 
 namespace BamBooShop.Service
 {
     public class CustomerService : IServiceBase<CustomerDto, string>
     {
         protected readonly MyContext context;
+        //private readonly JwtGenerator _jwtGenerator;
+
         public CustomerService(MyContext context)
         {
             this.context = context;
         }
-
+        public class AuthenticateRequest
+        {
+            [Required]
+            public string IdToken { get; set; }
+        }
         /// <summary>
         /// Gửi yêu cầu OTP vào email khi đăng ký tài khoản
         /// </summary>
@@ -397,33 +409,101 @@ namespace BamBooShop.Service
         /// <param name="entity"></param>
         /// <returns></returns>
         public virtual SocialNetworkCustomerDto InsertSocialNetworkAccount(SocialNetworkCustomerDto entity)
-        {    
-            var isExistCustomer = this.context.Customers
-                                    .FirstOrDefault(x => x.AuthToken == entity.AuthToken && x.Email == entity.Email);
-            if (isExistCustomer != null)
+        {
+            try
             {
-                throw new ArgumentException("This Email has already been used");         
-            }
-            else
-            {
-                Customer customer = new Customer()
+                var isExistCustomer = this.context.Customers
+                        .FirstOrDefault(x => x.Email == entity.Email);
+                if (isExistCustomer != null)
                 {
-                    Code = Guid.NewGuid().ToString("N"),
-                    FullName = entity.FullName,
-                    //PhoneNumber = "",
-                    Email = entity.Email,
-                    Password = DataHelper.SHA256Hash(entity.Email),
-                    AuthToken = entity.AuthToken,
-                    Avatar = entity.Avatar
-                };
+                    throw new ArgumentException("This Email has already been used");
+                }
+                else
+                {
+                    Customer customer = new Customer()
+                    {
+                        Code = Guid.NewGuid().ToString("N"),
+                        FullName = entity.FullName,
+                        //PhoneNumber = "",
+                        Email = entity.Email,
+                        Password = DataHelper.SHA256Hash(entity.Email),
+                        AuthToken = entity.AuthToken,
+                        Avatar = entity.Avatar,
+                        IdToken = entity.IdToken
+                    };
 
-                this.context.Customers.Add(customer);
-                this.context.SaveChanges();
+                    this.context.Customers.Add(customer);
+                    this.context.SaveChanges();
 
-                return entity;
+                    return entity;
+                }
             }
-            
+            catch(Exception ex)
+            {
+                throw new ArgumentException("This Email has already been used");
+            }
+
+
         }
 
+        /// <summary>
+        /// Login bằng Social network
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        /// 
+        public object LoginWithGoogleAccount(CustomerDto entity)
+        {
+            try
+            {
+                // gg configure
+                GoogleJsonWebSignature.ValidationSettings settings = new GoogleJsonWebSignature.ValidationSettings();
+
+                settings.Audience = new List<string>() { "251499186409-9rhhvhr9o1jgnrj4luf7gcro2q5l26r6.apps.googleusercontent.com" };
+
+                GoogleJsonWebSignature.Payload payload = GoogleJsonWebSignature.ValidateAsync(entity.IdToken, settings).Result;
+                //
+                Customer customer = this.context.Customers
+                    .FirstOrDefault(x => x.Email == payload.Email && x.IdToken != null && x.AuthToken != null);
+                if(customer == null)
+                {
+                    throw new ArgumentException("This Email is not exist");
+                }
+                customer.LastLogin = DateTime.Now;
+                customer.IdToken = entity.IdToken;
+                customer.AuthToken = entity.AuthToken;
+                this.context.SaveChanges();
+
+                DateTime expirationDate = DateTime.Now.Date.AddMinutes(Constants.JwtConfig.ExpirationInMinutes);
+                long expiresAt = (long)(expirationDate - new DateTime(1970, 1, 1)).TotalSeconds;
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(Constants.JwtConfig.SecretKey);
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(new Claim[]
+                    {
+                        new Claim(ClaimTypes.Sid, payload.Email.ToString()),
+                        new Claim(ClaimTypes.UserData, customer.Code),
+                        new Claim(ClaimTypes.Expiration, expiresAt.ToString())
+                    }),
+                    Expires = expirationDate,
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+
+                return new
+                {
+                    customer.Email,
+                    customer.FullName,
+                    Token = tokenHandler.WriteToken(token),
+                    ExpiresAt = expiresAt
+                };
+            }
+            catch(Exception ex)
+            {
+                throw new ArgumentException("Error");
+            }
+        }
     }
 }

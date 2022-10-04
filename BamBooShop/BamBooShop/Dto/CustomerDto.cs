@@ -22,8 +22,8 @@ namespace BamBooShop.Dto
         public string? City { get; set; } 
         public string? District { get; set; }
         public List<OrderDto> Orders { get; set; }
-        
         public string AuthToken { get; set; }
+        public string IdToken { get; set; }
     }
 
     public class SocialNetworkCustomerDto
@@ -32,5 +32,6 @@ namespace BamBooShop.Dto
         public string FullName { get; set; }
         public string Avatar { get; set; }
         public string AuthToken { get; set; }
+        public string IdToken { get; set; }
     }
 }

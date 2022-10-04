@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace BamBooShop.Controllers
 {
@@ -37,7 +38,22 @@ namespace BamBooShop.Controllers
                 return BadRequest(responseAPI);
             }
         }
-
+        [Route("socialNetwork-login")]
+        [HttpPost]
+        public IActionResult GetAccessTokenGoogleLogin(CustomerDto customer)
+        {
+            ResponseAPI responseAPI = new ResponseAPI();
+            try
+            {
+                responseAPI.Data = this._customerService.LoginWithGoogleAccount(customer);
+                return Ok(responseAPI);
+            }
+            catch (Exception ex)
+            {
+                responseAPI.Message = ex.Message;
+                return BadRequest(responseAPI);
+            }
+        }
         [Route("request-otp")]
         [HttpGet]
         public IActionResult RequestOTP(string email)
@@ -230,5 +246,7 @@ namespace BamBooShop.Controllers
                 return BadRequest(responseAPI);
             }
         }
+
+        
     }
 }

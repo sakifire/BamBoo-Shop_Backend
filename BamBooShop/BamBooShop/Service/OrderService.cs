@@ -168,6 +168,7 @@ namespace BamBooShop.Service
             Order order = this.context.Orders.FirstOrDefault(x => x.Id == key);
 
             order.Status = status;
+            if (order.Status == 40) order.IsPaid = true;
 
             //hmtien add 25/8
             if(order.Status == 50)

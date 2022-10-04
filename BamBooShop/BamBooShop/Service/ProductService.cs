@@ -46,7 +46,7 @@ namespace BamBooShop.Service
         {
             if (string.IsNullOrWhiteSpace(keySearch))
                 keySearch = null;
-            keySearch = keySearch.ToLower();
+            else keySearch = keySearch.ToLower();
             return this.context.Products
                 //hmtien add 19/8
                 .Where(x => !x.IsDeleted)

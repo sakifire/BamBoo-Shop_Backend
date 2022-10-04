@@ -24,6 +24,7 @@ namespace BamBooShop.Model
         public DateTime? LastLogin { get; set; }
         public string OTP { get; set; }
         public string AuthToken { get; set; }
+        public string IdToken { get; set; }
 
         public virtual ICollection<Order> Orders { get; set; }
     }

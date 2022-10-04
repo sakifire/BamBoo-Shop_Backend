@@ -10,7 +10,7 @@ namespace BamBooShop.Dto
     {
         public string Message { get; set; }
 
-        private bool _isIgnoreNullData;
+        public bool _isIgnoreNullData;
         private object _data;
         public object Data
         {
