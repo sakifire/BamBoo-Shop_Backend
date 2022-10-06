@@ -44,28 +44,39 @@ namespace BamBooShop.Service
         /// <returns></returns>
         public List<ArticleDto> Get(string keySearch)
         {
-            if (string.IsNullOrWhiteSpace(keySearch))
-                keySearch = null;
+            try
+            {
+                keySearch = keySearch.ToLower();
+                if (string.IsNullOrWhiteSpace(keySearch))
+                    keySearch = null;
 
-            return this.context.Articles
-                .Where(x => keySearch == null || x.Title.Contains(keySearch) || x.Menu.Name.Contains(keySearch))
-                .OrderBy(x => x.Index)
-                .Select(x => new ArticleDto()
-                {
-                    Id = x.Id,
-                    Title = x.Title,
-                    Alias = x.Alias,
-                    MenuId = x.MenuId,
-                    Index = x.Index,
-                    Active = x.Active,
-                    Image = x.Image,
-                    Menu = new MenuDto()
+                var result = this.context.Articles
+                    .Where(x => x.Title.Contains(keySearch) || x.Menu.Name.Contains(keySearch))
+                    .OrderBy(x => x.Index)
+                    .Select(x => new ArticleDto()
                     {
-                        Name = x.Menu.Name
-                    },
-                    Created = x.Created
-                })
-                .ToList();
+                        Id = x.Id,
+                        Title = x.Title,
+                        Alias = x.Alias,
+                        MenuId = x.MenuId,
+                        Index = x.Index,
+                        Active = x.Active,
+                        Image = x.Image,
+                        Menu = new MenuDto()
+                        {
+                            Name = x.Menu.Name
+                        },
+                        Created = x.Created
+                    })
+                    .Take(10)
+                    .ToList();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException("Something went wrong with search articles!");
+            }
+
         }
 
         /// <summary>

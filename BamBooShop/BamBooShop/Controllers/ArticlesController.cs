@@ -34,6 +34,24 @@ namespace BamBooShop.Controllers
                 return BadRequest(responseAPI);
             }
         }
+
+        [Route("search-article/{keySearch}")]
+        [HttpGet]
+        public IActionResult GetArticleByKeySearch(string keySearch)
+        {
+            ResponseAPI responseAPI = new ResponseAPI();
+            try
+            {
+                responseAPI.Data = this._articleService.Get(keySearch);
+                return Ok(responseAPI);
+            }
+            catch (Exception ex)
+            {
+                responseAPI.Message = ex.Message;
+                return BadRequest(responseAPI);
+            }
+        }
+
         [Route("get-all-article")]
         [HttpGet]
         public IActionResult GetAll()
