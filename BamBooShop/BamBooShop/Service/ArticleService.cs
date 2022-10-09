@@ -46,12 +46,13 @@ namespace BamBooShop.Service
         {
             try
             {
-                keySearch = keySearch.ToLower();
                 if (string.IsNullOrWhiteSpace(keySearch))
                     keySearch = null;
+                else keySearch = keySearch.ToLower();
+
 
                 var result = this.context.Articles
-                    .Where(x => x.Title.Contains(keySearch) || x.Menu.Name.Contains(keySearch))
+                    .Where(x => keySearch == null|| x.Title.Contains(keySearch) || x.Menu.Name.Contains(keySearch))
                     .OrderBy(x => x.Index)
                     .Select(x => new ArticleDto()
                     {
