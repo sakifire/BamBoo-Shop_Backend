@@ -1,3 +1,4 @@
+using BamBooShop.Interface;
 using BamBooShop.Service;
 using BamBooShop.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -87,6 +88,7 @@ namespace BamBooShop
             services.AddScoped<GalleryService>();
             services.AddScoped<MenuService>();
             services.AddScoped<OrderService>();
+            //services.AddSingleton<IProductService,ProductService>();
             services.AddScoped<ProductService>();
             services.AddScoped<ReportService>();
             services.AddScoped<ReviewService>();

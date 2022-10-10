@@ -1,4 +1,5 @@
 ﻿using BamBooShop.Dto;
+using BamBooShop.Interface;
 using BamBooShop.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +15,13 @@ namespace BamBooShop.Controllers
     public class ProductsController : ControllerBase
     {
         private ProductService _productService;
-        public ProductsController(ProductService productService)
+        //private IProductService _iProductService;
+        public ProductsController(ProductService productService 
+            //IProductService iProductService
+            )
         {
             this._productService = productService;
+            //this._iProductService = iProductService;
         }
 
         [HttpGet]
@@ -184,6 +189,24 @@ namespace BamBooShop.Controllers
             try
             {
                 this._productService.DeleteById(id);
+                return Ok(responseAPI);
+            }
+            catch (Exception ex)
+            {
+                responseAPI.Message = ex.Message;
+                return BadRequest(responseAPI);
+            }
+        }
+
+        [Route("search-product-autofill/{keySearch}")]
+        [HttpGet]
+        public IActionResult SearchAutoFill(string keySearch)
+        {
+            ResponseAPI responseAPI = new ResponseAPI();
+            try
+            {
+                //responseAPI.Data = this._iProductService.SearchAutoFill(keySearch);
+                responseAPI.Data = this._productService.SearchAutoFill(keySearch);
                 return Ok(responseAPI);
             }
             catch (Exception ex)

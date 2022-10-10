@@ -5,13 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BamBooShop.Dto;
+using BamBooShop.Interface;
 using BamBooShop.Model;
 using BamBooShop.Util;
 using Microsoft.AspNetCore.Hosting;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BamBooShop.Service
 {
-    public class ProductService : IServiceBase<ProductDto, int>
+    public class ProductService : IServiceBase<ProductDto, int>, IProductService
     {
         protected readonly MyContext context;
         protected IWebHostEnvironment hostEnvironment;
@@ -136,7 +138,12 @@ namespace BamBooShop.Service
             this.RestructureAttribute(products);
             return products;
         }
-
+        
+        /// <summary>
+        /// Get danh sách sản phẩm theo filter
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
         public List<ProductDto> Search(string keySearch, int take, string orderBy = "", string price = "")
         {
             List<ProductDto> query = this.context.Products
@@ -222,7 +229,30 @@ namespace BamBooShop.Service
 
             return query.Take(take).ToList();
         }
+        public List<string> SearchAutoFill(string keySearch)
+        {
+            try
+            {
+                List<string> productNames = new List<string>();
+                if (!string.IsNullOrWhiteSpace(keySearch))
+                {
+                    keySearch = keySearch.ToLower();
+                }
+                else return productNames;
 
+                productNames = this.context.Products
+                    .Where(x => x.Name.ToLower().Contains(keySearch))
+                    .Take(10)
+                    .Select(x => x.Name)
+                    .ToList();
+                return productNames;
+            }
+            catch (Exception ex)
+            {
+                return new List<string>();
+            }
+
+        }
         /// <summary>
         /// Get danh sách sản phẩm theo alias của danh mục menu
         /// </summary>
