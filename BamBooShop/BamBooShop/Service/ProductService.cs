@@ -52,7 +52,7 @@ namespace BamBooShop.Service
             return this.context.Products
                 //hmtien add 19/8
                 .Where(x => !x.IsDeleted)
-                .Where(x => keySearch == null || x.Name.ToLower().Contains(keySearch))
+                .Where(x => keySearch == null || x.Name.ToLower().Contains(keySearch) || x.Alias.ToLower().Contains(keySearch))
                 .Where(x => menuId == null || x.MenuId == menuId)
                 .OrderBy(x => x.Menu.Index)
                 .ThenBy(x => x.Index)
@@ -181,7 +181,7 @@ namespace BamBooShop.Service
             if (!string.IsNullOrWhiteSpace(keySearch))
             {
                 string lowerKeySeach = keySearch.ToLower();
-                query = query.Where(x => x.Name.ToLower().Contains(lowerKeySeach)).ToList();
+                query = query.Where(x => x.Name.ToLower().Contains(lowerKeySeach) || x.Alias.ToLower().Contains(lowerKeySeach)).ToList();
             }
 
             if (!string.IsNullOrWhiteSpace(orderBy))
@@ -241,7 +241,7 @@ namespace BamBooShop.Service
                 else return productNames;
 
                 productNames = this.context.Products
-                    .Where(x => x.Name.ToLower().Contains(keySearch))
+                    .Where(x => x.Name.ToLower().Contains(keySearch) || x.Alias.ToLower().Contains(keySearch))
                     .Take(10)
                     .Select(x => x.Name)
                     .ToList();
