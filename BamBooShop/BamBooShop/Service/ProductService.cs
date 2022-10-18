@@ -96,6 +96,30 @@ namespace BamBooShop.Service
                 .ToList();
         }
 
+        public List<OrderDetailDto> getTopProductBestSeller()
+        {
+            return this.context.OrderDetails
+                .GroupBy(x => new { 
+                    ProductId = x.ProductId, 
+                    ProductName = x.ProductName, 
+                    ProductImage = x.ProductImage,
+                    MenuName = x.Product.Menu.Name,
+                    Alias = x.Product.Alias
+                })
+                .Select(x => new OrderDetailDto()
+                {
+                    ProductId = x.Key.ProductId,
+                    ProductName = x.Key.ProductName,
+                    ProductImage = x.Key.ProductImage,
+                    MenuName = x.Key.MenuName,
+                    Alias = x.Key.Alias,
+                    TotalProductBestSeller = x.Sum(i => i.Qty)
+                })
+                .OrderByDescending(x => x.TotalProductBestSeller)
+                .Take(5)
+                .ToList();
+        }
+
         /// <summary>
         /// Get danh sách sản phẩm bán chạy hiển thị trên trang homepage
         /// </summary>

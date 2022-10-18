@@ -159,6 +159,26 @@ namespace BamBooShop.Controllers
             }
         }
 
+        [Route("get-top-order-customer")]
+        [HttpGet]
+        public IActionResult GetTopOrderCustomer()
+        {
+            ResponseAPI responseAPI = new ResponseAPI();
+            try
+            {
+                responseAPI.Data = this._customerService.GetTopOrderCustomer();
+                return Ok(responseAPI);
+            }
+            catch (Exception ex)
+            {
+                responseAPI.Message = ex.Message;
+                return BadRequest(responseAPI);
+            }
+        }
+
+
+
+
         [Route("{id}")]
         [HttpGet]
         public IActionResult GetById(string id)

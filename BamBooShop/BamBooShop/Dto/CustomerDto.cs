@@ -24,6 +24,7 @@ namespace BamBooShop.Dto
         public List<OrderDto> Orders { get; set; }
         public string AuthToken { get; set; }
         public string IdToken { get; set; }
+        public double? TotalAmountOrder { get; set; }  
     }
 
     public class SocialNetworkCustomerDto

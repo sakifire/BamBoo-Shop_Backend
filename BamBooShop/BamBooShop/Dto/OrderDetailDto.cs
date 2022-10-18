@@ -17,6 +17,9 @@ namespace BamBooShop.Dto
         public double? ProductDiscountPrice { get; set; }
         public int? Qty { get; set; }
         public string Attribute { get; set; }
+        public int? TotalProductBestSeller { get; set; }
+        public string MenuName { get; set; }
+        public string Alias { get; set; }
 
         public List<ReviewDto> Reviews { get; set; }
     }

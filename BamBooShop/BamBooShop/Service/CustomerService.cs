@@ -226,6 +226,27 @@ namespace BamBooShop.Service
                  .ToList();
         }
 
+
+        public List<CustomerDto> GetTopOrderCustomer()
+        {
+
+            return this.context.Customers
+                 .Select(x => new CustomerDto()
+                 {
+                     Code = x.Code,
+                     Address = x.Address,
+                     Avatar = x.Avatar,
+                     Dob = x.Dob,
+                     Email = x.Email,
+                     FullName = x.FullName,
+                     Gender = x.Gender,
+                     PhoneNumber = x.PhoneNumber,
+                     TotalAmountOrder = x.Orders.Select(y => y.TotalAmount).Sum()
+                 })
+                 .OrderByDescending(x => x.TotalAmountOrder)
+                 .Take(5).ToList();
+        }
+
         public virtual List<CustomerDto> GetAll()
         {
             throw new NotImplementedException();

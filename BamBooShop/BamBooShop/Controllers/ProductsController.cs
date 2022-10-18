@@ -74,6 +74,23 @@ namespace BamBooShop.Controllers
             }
         }
 
+        [Route("get-top-product-best-seller")]
+        [HttpGet]
+        public IActionResult getTopProductBestSeller()
+        {
+            ResponseAPI responseAPI = new ResponseAPI();
+            try
+            {
+                responseAPI.Data = this._productService.getTopProductBestSeller();
+                return Ok(responseAPI);
+            }
+            catch (Exception ex)
+            {
+                responseAPI.Message = ex.Message;
+                return BadRequest(responseAPI);
+            }
+        }
+
         [Route("get-product-selling")]
         [HttpGet]
         public IActionResult GetProductSelling()
