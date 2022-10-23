@@ -244,7 +244,7 @@ namespace BamBooShop.Service
                      TotalAmountOrder = x.Orders.Select(y => y.TotalAmount).Sum()
                  })
                  .OrderByDescending(x => x.TotalAmountOrder)
-                 .Take(5).ToList();
+                 .Take(10).ToList();
         }
 
         public virtual List<CustomerDto> GetAll()

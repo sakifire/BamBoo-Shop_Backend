@@ -116,7 +116,7 @@ namespace BamBooShop.Service
                     TotalProductBestSeller = x.Sum(i => i.Qty)
                 })
                 .OrderByDescending(x => x.TotalProductBestSeller)
-                .Take(5)
+                .Take(6)
                 .ToList();
         }
 
