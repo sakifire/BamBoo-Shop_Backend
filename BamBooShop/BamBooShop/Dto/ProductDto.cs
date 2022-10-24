@@ -22,6 +22,8 @@ namespace BamBooShop.Dto
         public string Description { get; set; }
         public bool IsDeleted { get; set; }
         public int? Quantity { get; set; }
+        public string ImageCloudLink { get; set; }
+
         public MenuDto Menu { get; set; }
         public List<ProductAttributeDto> ProductAttributes { get; set; }
         public List<ProductImageDto> ProductImages { get; set; }

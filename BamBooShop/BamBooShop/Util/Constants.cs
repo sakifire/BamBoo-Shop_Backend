@@ -47,5 +47,12 @@ namespace BamBooShop.Util
             public const int DA_DUYET = 20;
             public const int CAP_NHAT_LAI_CHO_DUYET = 30;
         }
+
+        public class CloudinaryAccount
+        {
+            public const string CloudName = "dp17ucd3o";
+            public const string APIKey = "118363644286879";
+            public const string APISecret = "jd8PaVGhyCYKAmyV-jzpF4sIeHY";
+        }
     }
 }
