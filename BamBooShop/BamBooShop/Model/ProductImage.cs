@@ -13,7 +13,7 @@ namespace BamBooShop.Model
         public int Id { get; set; }
         public int ProductId { get; set; }
         public string Image { get; set; }
-
+        public string ImageCloudLink { get; set; }  
         public virtual Product Product { get; set; }
     }
 }

@@ -11,5 +11,7 @@ namespace BamBooShop.Dto
         public int Id { get; set; }
         public int ProductId { get; set; }
         public string Image { get; set; }
+        public string ImageCloudLink { get; set; }
+
     }
 }

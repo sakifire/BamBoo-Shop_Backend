@@ -24,6 +24,7 @@ namespace BamBooShop.Model
         public string Description { get; set; }
         public bool IsDeleted { get; set; }
         public int? Quantity { get; set; }
+        public string ImageCloudLink { get; set; }
         public virtual Menu Menu { get; set; }
         public virtual ICollection<ProductAttribute> ProductAttributes { get; set; }
         public virtual ICollection<ProductImage> ProductImages { get; set; }
