@@ -76,6 +76,7 @@ namespace BamBooShop.Service
                     Status = x.Status,
                     //hmtien add 25/8
                     Quantity = x.Quantity,
+                    ImageCloudLink = x.ImageCloudLink,
                     Menu = x.Menu == null ? null : new MenuDto()
                     {
                         Name = x.Menu.Name
@@ -95,7 +96,8 @@ namespace BamBooShop.Service
                     Name = x.Name,
                     Image = x.Image,
                     //hmtien add 25/8
-                    Quantity = x.Quantity
+                    Quantity = x.Quantity,
+                    ImageCloudLink= x.ImageCloudLink
                 })
                 .ToList();
         }
@@ -125,6 +127,7 @@ namespace BamBooShop.Service
                     //IsDeleted = x.IsDeleted,
                     //hmtien add 25/8
                     Quantity = x.Quantity,
+                    ImageCloudLink = x.ImageCloudLink,
                     ProductAttributes = x.ProductAttributes.Select(y => new ProductAttributeDto()
                     {
                         Attribute = new AttributeDto()
@@ -168,6 +171,7 @@ namespace BamBooShop.Service
                     //hmtien add 25/8
                     ShortDescription = x.ShortDescription,
                     Quantity = x.Quantity,
+                    ImageCloudLink = x.ImageCloudLink,
                     ProductAttributes = x.ProductAttributes.Select(y => new ProductAttributeDto()
                     {
                         Attribute = new AttributeDto()
@@ -294,6 +298,7 @@ namespace BamBooShop.Service
                     //hmtien add 25/8
                     ShortDescription = x.ShortDescription,
                     Quantity = x.Quantity,
+                    ImageCloudLink = x.ImageCloudLink,
                     ProductAttributes = x.ProductAttributes.Select(y => new ProductAttributeDto()
                     {
                         Attribute = new AttributeDto()
@@ -384,6 +389,7 @@ namespace BamBooShop.Service
                      //hmtien add 20/8
                      //IsDeleted = x.IsDeleted,
                      Status = x.Status,
+                     ImageCloudLink = x.ImageCloudLink,
                      ProductAttributes = x.ProductAttributes.Select(y => new ProductAttributeDto()
                      {
                          AttributeId = y.AttributeId,
@@ -538,6 +544,7 @@ namespace BamBooShop.Service
                 Quantity = entity.Quantity,
                 ImageCloudLink = entity.ImageCloudLink,
             };
+
             product.Alias = entity.Alias + "-" + product.Id;
 
             if (entity.ProductImages != null && entity.ProductImages.Count > 0)
@@ -628,7 +635,7 @@ namespace BamBooShop.Service
 
         public void Update(int key, ProductDto entity)
         {
-            using (var transaction = this.context.Database.BeginTransaction())
+                using (var transaction = this.context.Database.BeginTransaction())
             {
                 Account account = new Account(
                    Constants.CloudinaryAccount.CloudName,
