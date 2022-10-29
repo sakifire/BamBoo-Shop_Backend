@@ -401,7 +401,8 @@ namespace BamBooShop.Service
                      }).ToList(),
                      ProductImages = x.ProductImages.Select(y => new ProductImageDto()
                      {
-                         Image = y.Image
+                         Image = y.Image,
+                         ImageCloudLink = y.ImageCloudLink
                      }).ToList()
                  })
                  .FirstOrDefault();
