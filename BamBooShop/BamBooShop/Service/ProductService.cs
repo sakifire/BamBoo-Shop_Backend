@@ -20,11 +20,13 @@ namespace BamBooShop.Service
     {
         protected readonly MyContext context;
         protected IWebHostEnvironment hostEnvironment;
+        protected readonly CloudImgUploadService cloudImgUpload;
 
-        public ProductService(MyContext context, IWebHostEnvironment hostEnvironment)
+        public ProductService(MyContext context, IWebHostEnvironment hostEnvironment, CloudImgUploadService cloudImgUpload)
         {
             this.context = context;
             this.hostEnvironment = hostEnvironment;
+            this.cloudImgUpload = cloudImgUpload;
         }
 
         public void DeleteById(int key, string userSession = null)
@@ -499,15 +501,18 @@ namespace BamBooShop.Service
 
         public ProductDto Insert(ProductDto entity)
         {
+            /*
             Account account = new Account(
                 Constants.CloudinaryAccount.CloudName,
                 Constants.CloudinaryAccount.APIKey,
                 Constants.CloudinaryAccount.APISecret);
 
             Cloudinary cloudinary = new Cloudinary(account);
-
             cloudinary.Api.Secure = true;
+             */
+            var cloudinary = this.cloudImgUpload.cloudinaryLogin();
             string imagePath = entity.Image;
+
             if (!string.IsNullOrWhiteSpace(entity.Image))
             {
                 if (entity.Image.Contains("data:image/png;base64,"))
@@ -567,6 +572,7 @@ namespace BamBooShop.Service
                             }
                             var filePath = item.value.Image;
                             item.value.Image = imgName;
+                            /*
                             var _uploadParams = new ImageUploadParams()
                             {
                                 File = new FileDescription(filePath),
@@ -575,7 +581,11 @@ namespace BamBooShop.Service
                                 //NotificationUrl = "https://mysite.example.com/my_notification_endpoint"
                             };
                             var _uploadResult = cloudinary.Upload(_uploadParams);
+
                             item.value.ImageCloudLink = _uploadResult.SecureUrl.ToString();
+                            */
+                            var _uploadResult = this.cloudImgUpload.ImgUpload(filePath, product.Alias + "-" + item.i, cloudinary);
+                            item.value.ImageCloudLink = _uploadResult;
                         }
                         productImages.Add(new ProductImage()
                         {
@@ -607,6 +617,7 @@ namespace BamBooShop.Service
 
             //cloud image upload
             //cloudinary file upload
+            /*
             var uploadParams = new ImageUploadParams()
             {
                 File = new FileDescription(imagePath),
@@ -627,7 +638,16 @@ namespace BamBooShop.Service
 
             product.ImageCloudLink = entity.ImageCloudLink;
             //
-            //login to cloud
+            */
+            try
+            {
+                var uploadResult = this.cloudImgUpload.ImgUpload(imagePath, product.Alias, cloudinary);
+                entity.ImageCloudLink = uploadResult;
+            }catch(Exception ex)
+            {
+                entity.ImageCloudLink = "";   
+            }
+            product.ImageCloudLink = entity.ImageCloudLink;
             this.context.Products.Add(product);
             this.context.SaveChanges();
 
@@ -636,16 +656,20 @@ namespace BamBooShop.Service
 
         public void Update(int key, ProductDto entity)
         {
-                using (var transaction = this.context.Database.BeginTransaction())
+            using (var transaction = this.context.Database.BeginTransaction())
             {
+                /*
                 Account account = new Account(
                    Constants.CloudinaryAccount.CloudName,
                    Constants.CloudinaryAccount.APIKey,
                    Constants.CloudinaryAccount.APISecret);
 
                 Cloudinary cloudinary = new Cloudinary(account);
-
                 cloudinary.Api.Secure = true;
+                */
+
+                var cloudinary = this.cloudImgUpload.cloudinaryLogin();
+
                 string imagePath = entity.Image;
                 if (!string.IsNullOrWhiteSpace(entity.Image))
                 {
@@ -671,29 +695,20 @@ namespace BamBooShop.Service
                 {
                     var oldAlias = product.Alias;
                     product.Alias = entity.Alias + "-" + key;
-                    //delete old alias img
-                    /*
-                    var deletionParams = new DeletionParams("BamBooShop/" + entity.Alias)
-                    {
-                        ResourceType = ResourceType.Image
-                    };
-                    var deletionResult = cloudinary.Destroy(deletionParams);
-                    */
-                    var renameImage = cloudinary.Rename("BamBooShop/" + oldAlias, "BamBooShop/" + product.Alias);
+
+                    //var renameImage = cloudinary.Rename("BamBooShop/" + oldAlias, "BamBooShop/" + product.Alias);
+                    var renameImage = this.cloudImgUpload.RenameImg(oldAlias, product.Alias, cloudinary);
+
                     int length = this.context.ProductImages.Where(x => x.ProductId == product.Id).Count();
                     for (int i = 0; i < length; i++)
                     {
-                        /*
-                        var _deletionParams = new DeletionParams("BamBooShop/" + entity.Alias + "-" + i)
-                        {
-                            ResourceType = ResourceType.Image
-                        };
-                        var _deletionResult = cloudinary.Destroy(deletionParams);*/
-                        var _renameImage = cloudinary.Rename("BamBooShop/" + oldAlias + "-" + i, "BamBooShop/" + product.Alias+ "-" + i);
+                        //var _renameImage = cloudinary.Rename("BamBooShop/" + oldAlias + "-" + i, "BamBooShop/" + product.Alias+ "-" + i);
+                        var _renameImage = this.cloudImgUpload.RenameImg(oldAlias + "-" + i, product.Alias + "-" + i, cloudinary);
                     }
                 }
                 if (product.Image != entity.Image)
                 {
+                    /*
                     //cloudinary file upload
                     var uploadParams = new ImageUploadParams()
                     {
@@ -706,12 +721,11 @@ namespace BamBooShop.Service
                     var uploadResult = cloudinary.Upload(uploadParams);
                     entity.ImageCloudLink = uploadResult.SecureUrl.ToString();
                     product.ImageCloudLink = entity.ImageCloudLink;
+                    */
                     //
+                    product.ImageCloudLink = this.cloudImgUpload.ImgUpload(imagePath, product.Alias, cloudinary);
                 }
                 product.Image = entity.Image;
-
-
-
                 product.Index = entity.Index;
                 product.Status = entity.Status;
                 product.Price = entity.Price;
@@ -759,6 +773,8 @@ namespace BamBooShop.Service
                                     imageFile.Flush();
                                 }
                                 item.value.Image = imgName;
+
+                                /*
                                 var _uploadParams = new ImageUploadParams()
                                 {
                                     File = new FileDescription(filePath),
@@ -768,6 +784,11 @@ namespace BamBooShop.Service
                                 };
                                 var _uploadResult = cloudinary.Upload(_uploadParams);
                                 item.value.ImageCloudLink = _uploadResult.SecureUrl.ToString();
+                                */
+                                
+                                var _uploadResult = this.cloudImgUpload.ImgUpload(filePath, product.Alias + "-" + item.i, cloudinary);
+                                item.value.ImageCloudLink = _uploadResult;
+                                
                                 productImages.Add(new ProductImage()
                                 {
                                     Image = item.value.Image,
@@ -800,11 +821,14 @@ namespace BamBooShop.Service
                 {
                     for (int i = entity.ProductImages.Count(); i < productImagesDeletedLength; i++)
                     {
+                        /*
                         var deletionParams = new DeletionParams("BamBooShop/" + product.Alias + "-" + i)
                         {
                             ResourceType = ResourceType.Image
                         };
                         var deletionResult = cloudinary.Destroy(deletionParams);
+                        */
+                        var delettionResult = this.cloudImgUpload.DeleteImg(product.Alias + "-" + i, cloudinary);
                     }
 
                 }
