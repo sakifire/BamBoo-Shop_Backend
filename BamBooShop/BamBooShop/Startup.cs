@@ -94,6 +94,7 @@ namespace BamBooShop
             services.AddScoped<ReviewService>();
             services.AddScoped<UserService>();
             services.AddScoped<WebsiteService>();
+            services.AddScoped<CloudImgUploadService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
