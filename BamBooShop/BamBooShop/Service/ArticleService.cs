@@ -75,7 +75,7 @@ namespace BamBooShop.Service
             }
             catch (Exception ex)
             {
-                throw new ArgumentException("Something went wrong with search articles!");
+                throw new ArgumentException("Lỗi kết nối");
             }
 
         }

@@ -207,11 +207,13 @@ namespace BamBooShop.Service
         /// <returns></returns>
         public List<CustomerDto> Get(string keySearch)
         {
-            if (!string.IsNullOrWhiteSpace(keySearch))
+            if (string.IsNullOrWhiteSpace(keySearch))
                 keySearch = null;
+            else keySearch = keySearch.ToLower();
 
             return this.context.Customers
-                 .Where(x => keySearch == null || x.FullName.Contains(keySearch))
+                 .Where(x => keySearch == null || x.FullName.ToLower().Contains(keySearch)
+                        || x.Email.ToLower().Contains(keySearch) || x.PhoneNumber.Contains(keySearch))
                  .Select(x => new CustomerDto()
                  {
                      Code = x.Code,
