@@ -216,6 +216,23 @@ namespace BamBooShop.Controllers
             }
         }
 
+        [Route("delete-by-list-id")]
+        [HttpGet]
+        public IActionResult DeleteByListId([FromQuery] List<int> id)
+        {
+            ResponseAPI responseAPI = new ResponseAPI();
+            try
+            {
+                this._productService.DeleteByListId(id);
+                return Ok(responseAPI);
+            }
+            catch (Exception ex)
+            {
+                responseAPI.Message = ex.Message;
+                return BadRequest(responseAPI);
+            }
+        }
+
         [Route("search-product-autofill/{keySearch}")]
         [HttpGet]
         public IActionResult SearchAutoFill(string keySearch)
