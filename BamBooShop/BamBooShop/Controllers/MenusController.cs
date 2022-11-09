@@ -1,4 +1,5 @@
 ﻿using BamBooShop.Dto;
+using BamBooShop.Model;
 using BamBooShop.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -219,6 +220,35 @@ namespace BamBooShop.Controllers
             {
                 responseAPI.Message = ex.Message;
                 return BadRequest(responseAPI);
+            }
+        }
+        [Route("{delete-by-list-id}")]
+        [HttpGet]
+        public IActionResult Delete(List<int> id)
+        {
+            ResponseAPI responseAPI = new ResponseAPI();
+            try
+            {
+                this._menuService.DeleteByListId(id);
+                return Ok(responseAPI);
+            }
+            catch (Exception ex)
+            {
+                responseAPI.Message = ex.Message;
+                return BadRequest(responseAPI);
+            }
+        }
+        [Route("get-all-product-menu")]
+        [HttpGet]
+        public async Task<ActionResult<List<MenuDto>>> GetAllProductMenu()
+        {
+            try
+            {
+                var result = this._menuService.GetAllProductMenu();
+                return result;
+            }catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

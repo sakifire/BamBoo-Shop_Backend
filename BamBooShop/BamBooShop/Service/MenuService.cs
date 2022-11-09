@@ -34,7 +34,33 @@ namespace BamBooShop.Service
             this.context.Menus.Remove(menu);
             this.context.SaveChanges();
         }
+        /// <summary>
+        /// Xóa danh mục menu
+        /// </summary>
+        public void DeleteByListId(List<int> key)
+        {
+            try
+            {
+                foreach (int id in key)
+                {
+                    if (this.context.Articles.Any(x => x.MenuId == id) ||
+                    this.context.Products.Any(x => x.MenuId == id) ||
+                    this.context.Menus.Any(x => x.ParentMenu == id))
+                        throw new ArgumentException("Dữ liệu đang được sử dụng");
 
+                    Menu menu = this.context.Menus.FirstOrDefault(x => x.Id == id);
+
+                    this.context.Menus.Remove(menu);
+                }
+
+                this.context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException("Lỗi kết nối");
+            }
+
+        }
         /// <summary>
         /// Get tất cả menu
         /// </summary>
@@ -246,6 +272,19 @@ namespace BamBooShop.Service
                      Name = x.Name,
                      ParentMenu = x.ParentMenu
                  }).ToList();
+        }
+        public List<MenuDto> GetAllProductMenu()
+        {
+            var result = this.context.Menus
+                .Where(x => x.Type == "san-pham")
+                 .OrderBy(x => x.Index)
+                 .Select(x => new MenuDto()
+                 {
+                     Id = x.Id,
+                     Name = x.Name,
+                     ParentMenu = x.ParentMenu
+                 }).ToList();
+            return result;
         }
 
         /// <summary>

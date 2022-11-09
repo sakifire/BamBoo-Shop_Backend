@@ -50,7 +50,28 @@ namespace BamBooShop.Service
                 transaction.Commit();
             }
         }
-
+        public void DeleteByListId(List<int> key, string userSession = null)
+        {
+            using (var transaction = this.context.Database.BeginTransaction())
+            {
+                foreach(var item in key)
+                {
+                    Product product = this.context.Products.FirstOrDefault(x => x.Id == item);
+                    if (product != null)
+                    {
+                        product.IsDeleted = true;
+                        this.context.Products.Update(product);
+                    }
+                    //this.context.ProductAttributes.RemoveRange(product.ProductAttributes);
+                    //this.context.ProductImages.RemoveRange(product.ProductImages);
+                    this.context.ProductRelateds.RemoveRange(product.ProductRelateds);
+                    //this.context.Reviews.RemoveRange(product.Reviews);
+                    //this.context.Products.Remove(product);
+                }
+                this.context.SaveChanges();
+                transaction.Commit();
+            }
+        }
         public List<ProductDto> Get(string keySearch, int? menuId)
         {
             if (string.IsNullOrWhiteSpace(keySearch))
