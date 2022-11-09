@@ -17,6 +17,8 @@ namespace BamBooShop.Dto
         public string ShortDescription { get; set; }
         public string Description { get; set; }
         public bool Active { get; set; }
+        public string ImageCloudLink { get; set; }
+
         public DateTime Created { get; set; }
 
         public MenuDto Menu { get; set; }

@@ -15,10 +15,13 @@ namespace BamBooShop.Service
     {
         protected readonly MyContext context;
         protected IWebHostEnvironment hostEnvironment;
-        public ArticleService(MyContext context, IWebHostEnvironment hostEnvironment)
+        protected readonly CloudImgUploadService cloudImgUpload;
+
+        public ArticleService(MyContext context, IWebHostEnvironment hostEnvironment, CloudImgUploadService cloudImgUpload)
         {
             this.context = context;
             this.hostEnvironment = hostEnvironment;
+            this.cloudImgUpload = cloudImgUpload;
         }
 
         /// <summary>
@@ -63,6 +66,7 @@ namespace BamBooShop.Service
                         Index = x.Index,
                         Active = x.Active,
                         Image = x.Image,
+                        ImageCloudLink = x.ImageCloudLink,
                         Menu = new MenuDto()
                         {
                             Name = x.Menu.Name
@@ -97,6 +101,7 @@ namespace BamBooShop.Service
                     //ShortDescription = x.ShortDescription,
                     //Description = x.Description,
                     Image = x.Image,
+                    ImageCloudLink = x.ImageCloudLink
 
                 })
                 .ToList();
@@ -118,6 +123,7 @@ namespace BamBooShop.Service
                     Title = x.Title,
                     Alias = x.Alias,
                     Image = x.Image,
+                    ImageCloudLink = x.ImageCloudLink,
                     Created = x.Created,
                     ShortDescription = x.ShortDescription,
                 })
@@ -151,6 +157,7 @@ namespace BamBooShop.Service
                     Title = x.Title,
                     Alias = x.Alias,
                     Image = x.Image,
+                    ImageCloudLink = x.ImageCloudLink,
                     Created = x.Created
                 })
                 .Take(take)
@@ -178,6 +185,7 @@ namespace BamBooShop.Service
                    Description = x.Description,
                    Created = x.Created,
                    Image = x.Image,
+                   ImageCloudLink = x.ImageCloudLink,
                    Index = x.Index,
                    MenuId = x.MenuId
                })
@@ -204,6 +212,7 @@ namespace BamBooShop.Service
                    ShortDescription = x.ShortDescription,
                    Description = x.Description,
                    Image = x.Image,
+                   ImageCloudLink = x.ImageCloudLink,
                    Created = x.Created
                })
                .FirstOrDefault();
@@ -216,12 +225,17 @@ namespace BamBooShop.Service
         /// <returns></returns>
         public ArticleDto Insert(ArticleDto entity)
         {
+            var cloudinary = this.cloudImgUpload.cloudinaryLogin();
+            string imagePath = entity.Image;
+
             if (!string.IsNullOrWhiteSpace(entity.Image))
             {
                 if (entity.Image.Contains("data:image/png;base64,"))
                 {
                     string path = Path.Combine(this.hostEnvironment.ContentRootPath, $"Resources/Images");
+
                     string imgName = Guid.NewGuid().ToString("N") + ".png";
+
                     var bytes = Convert.FromBase64String(entity.Image.Replace("data:image/png;base64,", ""));
                     using (var imageFile = new FileStream(path + "/" + imgName, FileMode.Create))
                     {
@@ -230,7 +244,6 @@ namespace BamBooShop.Service
                     }
                     entity.Image = imgName;
                 }
-
             }
             Article article = new Article()
             {
@@ -239,12 +252,25 @@ namespace BamBooShop.Service
                 Created = DateTime.Now,
                 Description = entity.Description,
                 Image = entity.Image,
+                ImageCloudLink = entity.ImageCloudLink,
                 Index = entity.Index,
                 MenuId = entity.MenuId,
                 ShortDescription = entity.ShortDescription,
                 Title = entity.Title,
             };
 
+            article.Alias = entity.Alias + "-" + article.Id;
+
+            try
+            {
+                var uploadResult = this.cloudImgUpload.ImgUpload(imagePath, article.Alias, cloudinary);
+                entity.ImageCloudLink = uploadResult;
+            }
+            catch (Exception ex)
+            {
+                entity.ImageCloudLink = "";
+            }
+            article.ImageCloudLink = entity.ImageCloudLink;
             this.context.Articles.Add(article);
             this.context.SaveChanges();
             article.Alias = entity.Alias + "-" + article.Id;
@@ -265,6 +291,9 @@ namespace BamBooShop.Service
 
             if (article != null)
             {
+
+                var cloudinary = this.cloudImgUpload.cloudinaryLogin();
+                string imagePath = entity.Image;
                 if (!string.IsNullOrWhiteSpace(entity.Image))
                 {
                     if (entity.Image.Contains("data:image/png;base64,"))
@@ -279,13 +308,29 @@ namespace BamBooShop.Service
                         }
                         entity.Image = imgName;
                     }
-
                 }
 
                 article.Title = entity.Title;
 
                 if (article.Alias != entity.Alias)
+                {
+                    var oldAlias = article.Alias;
                     article.Alias = entity.Alias + "-" + entity.Id;
+
+                    //var renameImage = cloudinary.Rename("BamBooShop/" + oldAlias, "BamBooShop/" + product.Alias);
+                    var renameImage = this.cloudImgUpload.RenameImg(oldAlias, article.Alias, cloudinary);
+
+                    int length = this.context.ProductImages.Where(x => x.ProductId == article.Id).Count();
+                    for (int i = 0; i < length; i++)
+                    {
+                        //var _renameImage = cloudinary.Rename("BamBooShop/" + oldAlias + "-" + i, "BamBooShop/" + product.Alias+ "-" + i);
+                        var _renameImage = this.cloudImgUpload.RenameImg(oldAlias + "-" + i, article.Alias + "-" + i, cloudinary);
+                    }
+                }
+                if (article.Image != entity.Image)
+                {
+                    article.ImageCloudLink = this.cloudImgUpload.ImgUpload(imagePath, article.Alias, cloudinary);
+                }
 
                 article.Active = entity.Active;
                 article.ShortDescription = entity.ShortDescription;
