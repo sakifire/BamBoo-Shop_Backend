@@ -201,10 +201,16 @@ namespace BamBooShop.Service
         /// <returns></returns>
         public List<ProductDto> Search(string keySearch, int take, string orderBy = "", string price = "")
         {
+            string lowerKeySeach = keySearch;
+            if (!string.IsNullOrWhiteSpace(keySearch))
+            {
+                lowerKeySeach = keySearch.ToLower();
+            }
             List<ProductDto> query = this.context.Products
                 //hmtien add 19/8
                 .Where(x => !x.IsDeleted)
                 .Where(x => x.Status == 10)
+                .Where(x => x.Name.ToLower().Contains(lowerKeySeach) || x.Alias.ToLower().Contains(lowerKeySeach))
                 .OrderBy(x => x.Index)
                 .Select(x => new ProductDto()
                 {
@@ -234,11 +240,11 @@ namespace BamBooShop.Service
                 .ToList();
             this.RestructureAttribute(query);
 
-            if (!string.IsNullOrWhiteSpace(keySearch))
+            /*if (!string.IsNullOrWhiteSpace(keySearch))
             {
                 string lowerKeySeach = keySearch.ToLower();
                 query = query.Where(x => x.Name.ToLower().Contains(lowerKeySeach) || x.Alias.ToLower().Contains(lowerKeySeach)).ToList();
-            }
+            }*/
 
             if (!string.IsNullOrWhiteSpace(orderBy))
             {
@@ -472,6 +478,7 @@ namespace BamBooShop.Service
                     DiscountPrice = x.DiscountPrice,
                     Selling = x.Selling,
                     Image = x.Image,
+                    ImageCloudLink = x.ImageCloudLink,
                     Index = x.Index,
                     MenuId = x.MenuId,
                     Price = x.Price,
@@ -505,7 +512,8 @@ namespace BamBooShop.Service
 
                     ProductImages = x.ProductImages.Select(y => new ProductImageDto()
                     {
-                        Image = y.Image
+                        Image = y.Image,
+                        ImageCloudLink=y.ImageCloudLink,
                     }).ToList(),
 
                     Reviews = x.Reviews.OrderByDescending(y => y.Created)
