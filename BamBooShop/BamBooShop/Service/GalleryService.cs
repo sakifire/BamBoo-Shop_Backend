@@ -14,10 +14,14 @@ namespace BamBooShop.Service
     {
         protected readonly MyContext context;
         protected IWebHostEnvironment hostEnvironment;
-        public GalleryService(MyContext context, IWebHostEnvironment hostEnvironment)
+        protected readonly CloudImgUploadService cloudImgUpload;
+
+        public GalleryService(MyContext context, IWebHostEnvironment hostEnvironment, CloudImgUploadService cloudImgUpload)
         {
             this.context = context;
             this.hostEnvironment = hostEnvironment;
+            this.cloudImgUpload = cloudImgUpload;
+
         }
 
         public void DeleteById(int key, string userSession = null)
@@ -32,7 +36,9 @@ namespace BamBooShop.Service
             {
                 Id = x.Id,
                 Image = x.Image,
-                Type = x.Type
+                Type = x.Type,
+                BanerCloudLink = x.BanerCloudLink,
+
             }).ToList();
         }
 
@@ -44,18 +50,24 @@ namespace BamBooShop.Service
                 {
                     Id = x.Id,
                     Image = x.Image,
-                    Type = x.Type
+                    Type = x.Type,
+                    BanerCloudLink = x.BanerCloudLink,
                 }).FirstOrDefault();
         }
 
         public GalleryDto Insert(GalleryDto entity)
         {
+            var cloudinary = this.cloudImgUpload.cloudinaryLogin();
+            string imagePath = entity.Image;
+
             if (!string.IsNullOrWhiteSpace(entity.Image))
             {
                 if (entity.Image.Contains("data:image/png;base64,"))
                 {
                     string path = Path.Combine(this.hostEnvironment.ContentRootPath, $"Resources/Images");
+
                     string imgName = Guid.NewGuid().ToString("N") + ".png";
+
                     var bytes = Convert.FromBase64String(entity.Image.Replace("data:image/png;base64,", ""));
                     using (var imageFile = new FileStream(path + "/" + imgName, FileMode.Create))
                     {
@@ -64,24 +76,41 @@ namespace BamBooShop.Service
                     }
                     entity.Image = imgName;
                 }
-
             }
 
             Gallery gallery = new Gallery()
             {
                 Image = entity.Image,
-                Type = entity.Type
+                Type = entity.Type,
+                BanerCloudLink = entity.BanerCloudLink,
+
             };
 
+/*            gallery.Image = entity.Image + "-" + gallery.Id;
+*/
+            try
+            {
+                var uploadResult = this.cloudImgUpload.ImgUpload(imagePath, gallery.Image, cloudinary);
+                entity.BanerCloudLink = uploadResult;
+            }
+            catch (Exception ex)
+            {
+                entity.BanerCloudLink = "";
+            }
+
+            gallery.BanerCloudLink = entity.BanerCloudLink;
             this.context.Galleries.Add(gallery);
             this.context.SaveChanges();
-
             return entity;
 
         }
 
         public void Update(int key, GalleryDto entity)
         {
+            Gallery gallery = this.context.Galleries.FirstOrDefault(x => x.Id == key);
+
+            var cloudinary = this.cloudImgUpload.cloudinaryLogin();
+            string imagePath = entity.Image;
             if (!string.IsNullOrWhiteSpace(entity.Image))
             {
                 if (entity.Image.Contains("data:image/png;base64,"))
@@ -96,10 +125,18 @@ namespace BamBooShop.Service
                     }
                     entity.Image = imgName;
                 }
-
             }
 
-            Gallery gallery = this.context.Galleries.FirstOrDefault(x => x.Id == key);
+            if (gallery.Image != entity.Image)
+            {
+                var oldImage = gallery.Image;
+                gallery.Image = entity.Image + "-" + entity.Id;
+
+                var renameImage = this.cloudImgUpload.RenameImg(oldImage, gallery.Image, cloudinary);
+
+                gallery.BanerCloudLink = this.cloudImgUpload.ImgUpload(imagePath, gallery.Image, cloudinary);
+            }
+
             gallery.Image = entity.Image;
             gallery.Type = entity.Type;
 

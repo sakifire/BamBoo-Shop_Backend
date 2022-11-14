@@ -21,6 +21,8 @@ namespace BamBooShop.Model
         public string Facebook { get; set; }
         public string Youtube { get; set; }
         public string Copyright { get; set; }
+        public string LogoCloudLink { get; set; }
+
 
     }
 }

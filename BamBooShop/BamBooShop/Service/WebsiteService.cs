@@ -14,11 +14,15 @@ namespace BamBooShop.Service
     {
         protected readonly MyContext context;
         protected IWebHostEnvironment hostEnvironment;
+        protected readonly CloudImgUploadService cloudImgUpload;
 
-        public WebsiteService(MyContext context, IWebHostEnvironment hostEnvironment)
+
+        public WebsiteService(MyContext context, IWebHostEnvironment hostEnvironment, CloudImgUploadService cloudImgUpload)
         {
             this.context = context;
             this.hostEnvironment = hostEnvironment;
+            this.cloudImgUpload = cloudImgUpload;
+
         }
 
         public void DeleteById(int key, string userSession = null)
@@ -40,7 +44,8 @@ namespace BamBooShop.Service
                 Logo = x.Logo,
                 Name = x.Name,
                 PhoneNumber = x.PhoneNumber,
-                Youtube = x.Youtube
+                Youtube = x.Youtube,
+                LogoCloudLink = x.LogoCloudLink
             }).ToList();
         }
 
@@ -56,6 +61,10 @@ namespace BamBooShop.Service
 
         public void Update(int key, WebsiteDto entity)
         {
+            Website website = this.context.Websites.FirstOrDefault(x => x.Id == key);
+
+            var cloudinary = this.cloudImgUpload.cloudinaryLogin();
+            string imagePath = entity.Logo;
             if (!string.IsNullOrWhiteSpace(entity.Logo))
             {
                 if (entity.Logo.Contains("data:image/png;base64,"))
@@ -70,10 +79,28 @@ namespace BamBooShop.Service
                     }
                     entity.Logo = imgName;
                 }
-
             }
 
-            Website website = this.context.Websites.FirstOrDefault(x => x.Id == key);
+
+            if (website.Fax != entity.Fax)
+            {
+                var oldFax = website.Fax;
+                website.Fax = entity.Fax + "-" + entity.Id;
+
+                //var renameImage = cloudinary.Rename("BamBooShop/" + oldAlias, "BamBooShop/" + product.Alias);
+                var renameImage = this.cloudImgUpload.RenameImg(oldFax, website.Fax, cloudinary);
+
+                int length = this.context.ProductImages.Where(x => x.ProductId == website.Id).Count();
+                for (int i = 0; i < length; i++)
+                {
+                    //var _renameImage = cloudinary.Rename("BamBooShop/" + oldAlias + "-" + i, "BamBooShop/" + product.Alias+ "-" + i);
+                    var _renameImage = this.cloudImgUpload.RenameImg(oldFax + "-" + i, website.Fax + "-" + i, cloudinary);
+                }
+            }
+            if (website.Logo != entity.Logo)
+            {
+                website.LogoCloudLink = this.cloudImgUpload.ImgUpload(imagePath, website.Logo, cloudinary);
+            }
 
             website.Address = entity.Address;
             website.Copyright = entity.Copyright;
@@ -85,6 +112,7 @@ namespace BamBooShop.Service
             website.Name = entity.Name;
             website.PhoneNumber = entity.PhoneNumber;
             website.Youtube = entity.Youtube;
+
 
             this.context.SaveChanges();
         }
