@@ -45,7 +45,7 @@ namespace BamBooShop.Service
                 Name = x.Name,
                 PhoneNumber = x.PhoneNumber,
                 Youtube = x.Youtube,
-                LogoCloudLink = x.LogoCloudLink
+                ImageCloudLink = x.ImageCloudLink
             }).ToList();
         }
 
@@ -99,7 +99,7 @@ namespace BamBooShop.Service
             }
             if (website.Logo != entity.Logo)
             {
-                website.LogoCloudLink = this.cloudImgUpload.ImgUpload(imagePath, website.Logo, cloudinary);
+                website.ImageCloudLink = this.cloudImgUpload.ImgUpload(imagePath, website.Logo, cloudinary);
             }
 
             website.Address = entity.Address;

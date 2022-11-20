@@ -133,6 +133,7 @@ namespace BamBooShop.Service
                     ProductId = x.ProductId, 
                     ProductName = x.ProductName, 
                     ProductImage = x.ProductImage,
+                    ImageCloudLink = x.ImageCloudLink,
                     MenuName = x.Product.Menu.Name,
                     Alias = x.Product.Alias
                 })
@@ -143,6 +144,7 @@ namespace BamBooShop.Service
                     ProductImage = x.Key.ProductImage,
                     MenuName = x.Key.MenuName,
                     Alias = x.Key.Alias,
+                    ImageCloudLink = x.Key.ImageCloudLink,
                     TotalProductBestSeller = x.Sum(i => i.Qty)
                 })
                 .OrderByDescending(x => x.TotalProductBestSeller)

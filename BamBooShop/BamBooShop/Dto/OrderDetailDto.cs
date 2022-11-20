@@ -20,7 +20,7 @@ namespace BamBooShop.Dto
         public int? TotalProductBestSeller { get; set; }
         public string MenuName { get; set; }
         public string Alias { get; set; }
-
+        public string ImageCloudLink { get; set; }
         public List<ReviewDto> Reviews { get; set; }
     }
 }
