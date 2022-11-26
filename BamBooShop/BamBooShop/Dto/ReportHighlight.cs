@@ -16,5 +16,6 @@ namespace BamBooShop.Dto
         public List<int> OrderQtyByStatus { get; set; }
         public List<int> OrderQty { get; set; }
         public List<double> Revenues { get; set; }
+        public List<List<int>> OrderQtyByStatusInYear { get; set; }
     }
 }

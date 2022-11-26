@@ -49,6 +49,7 @@ namespace BamBooShop.Service
             highlight.OrderQty = new List<int>();
             highlight.OrderQtyByStatus = new List<int>();
             highlight.Revenues = new List<double>();
+            highlight.OrderQtyByStatusInYear = new List<List<int>>();
 
             DateTime dateNow = DateTime.Now;
 
@@ -86,8 +87,29 @@ namespace BamBooShop.Service
                         .Where(x => x.Created.Month == date.Value.Month &&
                                     x.Created.Year == date.Value.Year)
                         .Count());
+
             });
 
+            new List<int>()
+            {
+                Constants.OrderStatus.CHO_XAC_NHAN,
+                Constants.OrderStatus.DA_XAC_NHAN,
+                Constants.OrderStatus.DANG_VAN_CHUYEN,
+                Constants.OrderStatus.DA_GIAO,
+                Constants.OrderStatus.DA_HUY,
+            }.ForEach(status =>
+            {
+                var dataInYearOfStatus = new List<int>();
+                for( int i = 1; i<= 12; i++)
+                {
+                    dataInYearOfStatus.Add(this.context.Orders
+                        .Where(x => x.Status == status)
+                        .Where(x => x.Created.Month == i && x.Created.Year == date.Value.Year)
+                        .Count());
+                }
+                highlight.OrderQtyByStatusInYear.Add(dataInYearOfStatus);
+
+            });
             return highlight;
         }
 
