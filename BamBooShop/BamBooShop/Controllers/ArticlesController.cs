@@ -187,5 +187,22 @@ namespace BamBooShop.Controllers
             }
         }
 
+        [Route("delete-by-list-id-article")]
+        [HttpGet]
+        public IActionResult DeleteByListId([FromQuery] List<int> id)
+        {
+            ResponseAPI responseAPI = new ResponseAPI();
+            try
+            {
+                this._articleService.DeleteByListId(id);
+                return Ok(responseAPI);
+            }
+            catch (Exception ex)
+            {
+                responseAPI.Message = ex.Message;
+                return BadRequest(responseAPI);
+            }
+        }
+
     }
 }

@@ -34,6 +34,24 @@ namespace BamBooShop.Service
             }
         }
 
+        public void DeleteByListId(List<int> key, string userSession = null)
+        {
+            using (var transaction = this.context.Database.BeginTransaction())
+            {
+                foreach (var item in key)
+                {
+                    Model.Attribute attribute = this.context.Attributes.FirstOrDefault(x => x.Id == item);
+                    if (attribute != null)
+                    {
+                        this.context.Attributes.Remove(attribute);
+                        this.context.Attributes.Update(attribute);
+                    }
+                }
+                this.context.SaveChanges();
+                transaction.Commit();
+            }
+        }
+
         /// <summary>
         /// Get thuộc tính theo từ khóa
         /// </summary>

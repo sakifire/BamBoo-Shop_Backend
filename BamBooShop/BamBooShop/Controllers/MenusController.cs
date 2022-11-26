@@ -222,6 +222,24 @@ namespace BamBooShop.Controllers
                 return BadRequest(responseAPI);
             }
         }
+
+
+        [Route("delete-by-list-id-menu")]
+        [HttpGet]
+        public IActionResult DeleteByListId([FromQuery] List<int> id)
+        {
+            ResponseAPI responseAPI = new ResponseAPI();
+            try
+            {
+                this._menuService.DeleteByListId(id);
+                return Ok(responseAPI);
+            }
+            catch (Exception ex)
+            {
+                responseAPI.Message = ex.Message;
+                return BadRequest(responseAPI);
+            }
+        }
         [Route("{delete-by-list-id}")]
         [HttpGet]
         public IActionResult Delete(List<int> id)

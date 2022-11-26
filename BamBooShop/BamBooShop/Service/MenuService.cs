@@ -34,6 +34,24 @@ namespace BamBooShop.Service
             this.context.Menus.Remove(menu);
             this.context.SaveChanges();
         }
+
+        public void DeleteByListId(List<int> key, string userSession = null)
+        {
+            using (var transaction = this.context.Database.BeginTransaction())
+            {
+                foreach (var item in key)
+                {
+                    Menu menu = this.context.Menus.FirstOrDefault(x => x.Id == item);
+                    if (menu != null)
+                    {
+                        this.context.Menus.Remove(menu);
+                        this.context.Menus.Update(menu);
+                    }
+                }
+                this.context.SaveChanges();
+                transaction.Commit();
+            }
+        }
         /// <summary>
         /// Xóa danh mục menu
         /// </summary>
