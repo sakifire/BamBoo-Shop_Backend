@@ -37,7 +37,7 @@ namespace BamBooShop.Service
                 Id = x.Id,
                 Image = x.Image,
                 Type = x.Type,
-                BanerCloudLink = x.BanerCloudLink,
+                ImageCloudLink = x.ImageCloudLink,
 
             }).ToList();
         }
@@ -51,7 +51,7 @@ namespace BamBooShop.Service
                     Id = x.Id,
                     Image = x.Image,
                     Type = x.Type,
-                    BanerCloudLink = x.BanerCloudLink,
+                    ImageCloudLink = x.ImageCloudLink,
                 }).FirstOrDefault();
         }
 
@@ -82,7 +82,7 @@ namespace BamBooShop.Service
             {
                 Image = entity.Image,
                 Type = entity.Type,
-                BanerCloudLink = entity.BanerCloudLink,
+                ImageCloudLink = entity.ImageCloudLink,
 
             };
 
@@ -91,14 +91,14 @@ namespace BamBooShop.Service
             try
             {
                 var uploadResult = this.cloudImgUpload.ImgUpload(imagePath, gallery.Image, cloudinary);
-                entity.BanerCloudLink = uploadResult;
+                entity.ImageCloudLink = uploadResult;
             }
             catch (Exception ex)
             {
-                entity.BanerCloudLink = "";
+                entity.ImageCloudLink = "";
             }
 
-            gallery.BanerCloudLink = entity.BanerCloudLink;
+            gallery.ImageCloudLink = entity.ImageCloudLink;
             this.context.Galleries.Add(gallery);
             this.context.SaveChanges();
             return entity;
@@ -134,7 +134,7 @@ namespace BamBooShop.Service
 
                 var renameImage = this.cloudImgUpload.RenameImg(oldImage, gallery.Image, cloudinary);
 
-                gallery.BanerCloudLink = this.cloudImgUpload.ImgUpload(imagePath, gallery.Image, cloudinary);
+                gallery.ImageCloudLink = this.cloudImgUpload.ImgUpload(imagePath, gallery.Image, cloudinary);
             }
 
             gallery.Image = entity.Image;

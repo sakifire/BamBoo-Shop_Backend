@@ -19,7 +19,7 @@ namespace BamBooShop.Model
         public double? ProductDiscountPrice { get; set; }
         public int? Qty { get; set; }
         public string Attribute { get; set; }
-
+        public string ImageCloudLink { get; set;}
         public virtual Order Order { get; set; }
         public virtual Product Product { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
