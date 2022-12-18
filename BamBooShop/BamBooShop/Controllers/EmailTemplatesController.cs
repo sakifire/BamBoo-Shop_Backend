@@ -34,6 +34,21 @@ namespace BamBooShop.Controllers
                 return BadRequest(responseAPI);
             }
         }
+        [HttpPost]
+        public IActionResult Insert(EmailTemplateDto emailTemplate)
+        {
+            ResponseAPI responseAPI = new ResponseAPI();
+            try
+            {
+                responseAPI.Data = this._emailTemplateService.Insert(emailTemplate);
+                return Ok(responseAPI);
+            }
+            catch (Exception ex)
+            {
+                responseAPI.Message = ex.Message;
+                return BadRequest(responseAPI);
+            }
+        }
 
         [Route("{id}")]
         [HttpGet]

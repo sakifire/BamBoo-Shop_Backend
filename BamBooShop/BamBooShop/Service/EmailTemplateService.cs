@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BamBooShop.Dto;
 using BamBooShop.Model;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BamBooShop.Service
 {
@@ -52,7 +53,24 @@ namespace BamBooShop.Service
 
         public virtual EmailTemplateDto Insert(EmailTemplateDto entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var emailTemplate = new EmailTemplate();
+                emailTemplate.Subject = entity.Subject;
+                emailTemplate.Type = entity.Type;
+                emailTemplate.BCC = entity.BCC;
+                emailTemplate.CC = entity.CC;
+                emailTemplate.KeyGuide = entity.KeyGuide;
+                emailTemplate.Content = entity.Content;
+
+                this.context.EmailTemplates.Add(emailTemplate);
+                this.context.SaveChanges();
+                return entity;
+            }catch(Exception ex)
+            {
+                throw new ArgumentException(ex.Message);
+
+            }
         }
 
         public virtual void Update(int key, EmailTemplateDto entity)

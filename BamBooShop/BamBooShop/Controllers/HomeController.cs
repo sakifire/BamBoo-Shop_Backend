@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Controllers
+namespace BamBooShop.Controllers
 {
     [ApiController]
     public class HomeController : ControllerBase
