@@ -46,7 +46,7 @@ namespace BamBooShop.Util
         {
             SmtpClient client = new SmtpClient("smtp.gmail.com");
             MailMessage mail = new MailMessage();
-            mail.From = new MailAddress(emailConfig.Email, "DEcommerce Notification");
+            mail.From = new MailAddress(emailConfig.Email, "BamBoo Notification");
             mail.Subject = subject;
             //mail.Body = body;
             mail.IsBodyHtml = true;
