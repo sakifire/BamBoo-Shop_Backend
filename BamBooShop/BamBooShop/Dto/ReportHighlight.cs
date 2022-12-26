@@ -18,4 +18,12 @@ namespace BamBooShop.Dto
         public List<double> Revenues { get; set; }
         public List<List<int>> OrderQtyByStatusInYear { get; set; }
     }
+    public class Notification
+    {
+        public int WipOrders { get; set; }
+        public int WipReviews{ get; set; }
+        public int Orders { get; set; }
+
+
+    }
 }

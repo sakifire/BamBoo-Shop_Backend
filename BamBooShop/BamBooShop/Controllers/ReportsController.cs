@@ -86,5 +86,22 @@ namespace BamBooShop.Controllers
                 return BadRequest(responseAPI);
             }
         }
+
+        [Route("menu-notification")]
+        [HttpGet]
+        public  IActionResult GetMenuNotification()
+        {
+            ResponseAPI responseAPI = new ResponseAPI();
+            try
+            {
+                responseAPI.Data = this._reportService.GetMenuNotification();
+                return Ok(responseAPI);
+            }
+            catch (Exception ex)
+            {
+                responseAPI.Message = ex.Message;
+                return BadRequest(responseAPI);
+            }
+        }
     }
 }

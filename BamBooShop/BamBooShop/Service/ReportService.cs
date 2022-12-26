@@ -218,5 +218,19 @@ namespace BamBooShop.Service
                 orderQty
             };
         }
+
+        public object GetMenuNotification()
+        {
+            int wipOrders = this.context.Orders.Count(x => x.Status == 10 || x.Status == 20 || x.Status == 30);
+            //int totalOrders = this.context.Orders.Count();
+            int orders = this.context.Orders.Count(x => x.Status != 50);
+            int wipReviews = this.context.Reviews.Count(x => x.Status != 20);
+            return new Notification
+            {
+                WipOrders = wipOrders,
+                Orders = orders,
+                WipReviews = wipReviews,
+            };
+        }
     }
 }
